@@ -1,0 +1,14 @@
+[project]
+name = "cli_lambda"
+version = "0.1.0"
+description = "A CLI tool for managing AWS Lambda functions with IRIS integration"
+authors = [
+    { name = "Juan Duque", email = "juandg@iris.co.com" }
+]
+dependencies = [
+    "typer[all]",
+    "jinja2"
+]
+
+[project.scripts]
+cli_lambda = "cli_lambda.main:app"

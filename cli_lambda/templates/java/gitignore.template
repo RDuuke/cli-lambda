@@ -1,0 +1,8 @@
+.aws-sam/
+template.yaml
+event.json
+target/
+*.class
+.idea/
+*.iml
+.vscode/

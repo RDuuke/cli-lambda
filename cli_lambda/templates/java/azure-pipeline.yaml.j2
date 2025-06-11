@@ -1,0 +1,53 @@
+name: $(date:yyyyMMdd)$(rev:.r)
+variables:
+- name: SourcesDirectory
+  value: {{name}}
+- name: SonarProjectKey
+  value: CL00079-CustomerInfoSiif-{{name}}
+- name: SonarExclusions
+  value: /deploy, **/deploy/**, /test/**, /src/test/**, **/*.spec.js, **/config/**
+- name: AppType
+  value: java
+- name: PomFileDir
+  value: {{name}}
+- name: SonarJavaBinaries
+  value: ./target/classes/**
+- name: SonarJavaSource
+  value: ./src/main/java
+- name: FunctionFullName
+  value: CL00079-CustomerInfoSiif-{{name.replace("lda-", "")}}-ENV-Lambda
+
+resources:
+  repositories:
+  - repository: templates
+    type: git
+    name: Iris/CL00018-AzureDevops-Apps
+    ref: refs/heads/master
+
+trigger:
+  batch: 'true'
+  branches:
+    include:
+    - master
+    - release
+    - develop
+  paths:
+    include:
+    - {{name}}/*
+    exclude:
+    - {{name}}/README.md
+
+stages:
+- template: /CI/BuildLambdaJava.yml@templates
+  parameters:
+    SourcesDirectory: $(SourcesDirectory)
+    SonarProjectKey: $(SonarProjectKey)
+    SonarExclusions: $(SonarExclusions)
+    AppType: $(AppType)
+    PomFileDir: $(PomFileDir)
+    SonarJavaBinaries: $(SonarJavaBinaries)
+    SonarJavaSource: $(SonarJavaSource)
+- template: /CD/DeployLambda.yml@templates
+  parameters:
+    FunctionFullName: $(FunctionFullName)
+    SourcesDirectory: $(SourcesDirectory)

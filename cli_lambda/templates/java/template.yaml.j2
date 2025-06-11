@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda Java generada automáticamente con CLI para pruebas locales
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: java11
+    MemorySize: 512
+
+Resources:
+  {{resource_name}}:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.{{package_name}}.Handler::handleRequest
+      CodeUri: .
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /{{api_path}}
+            Method: get

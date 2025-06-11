@@ -1,0 +1,19 @@
+package {{package}};
+
+import org.junit.Test;
+import java.util.HashMap;
+import java.util.Map;
+import static org.junit.Assert.*;
+
+public class HandlerTest {
+
+    @Test
+    public void testHandleRequestReturns200() {
+        Handler handler = new Handler();
+        Map<String, Object> input = new HashMap<>();
+        Response response = handler.handleRequest(input, null);
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals("Funciona desde SAM local!", response.getMessage());
+    }
+}
