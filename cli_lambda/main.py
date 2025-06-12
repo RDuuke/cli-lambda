@@ -2,7 +2,7 @@ from cli_lambda.java_scaffolder import scaffold_java_lambda
 import typer
 from pathlib import Path
 
-app = typer.Typer()
+app = typer.Typer(help="CLI para generar funciones AWS Lambda con arquitectura Java y SAM.")
 
 @app.command()
 def hello(name: str):

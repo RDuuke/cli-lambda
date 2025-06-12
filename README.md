@@ -19,6 +19,26 @@ Compatible con:
 
 Para probar funciones localmente se requiere Docker configurado correctamente con red y permisos.
 
+## 🐍 Uso del entorno virtual
+Se recomienda utilizar un entorno virtual para mantener las dependencias del proyecto aisladas.
+
+1. Crear el entorno virtual
+
+``` bash
+python -m venv venv
+```
+
+2. Activar el entorno virtual
+
+-  En Windows:
+``` bash
+venv\Scripts\activate
+```
+- En Linux/macOS:
+
+``` bash
+source venv/bin/activate
+```
 
 ## 🔧 Instalación
 
@@ -28,6 +48,13 @@ Clona el repositorio y usa instalación editable con [pip](https://pip.pypa.io/)
 pip install --editable .
 
 ```
+
+Verificar que el CLI funciona
+```bash
+cli_lambda --help
+```
+
+
 
 ## 🧪 Cómo usarlo
 
