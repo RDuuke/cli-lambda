@@ -5,6 +5,10 @@ from pathlib import Path
 app = typer.Typer()
 
 @app.command()
+def hello(name: str):
+    typer.echo(f"Hello {name}")
+
+@app.command()
 def create_java(name: str):
     """
     Crea la estructura base de una Lambda Java con nombre `name`.

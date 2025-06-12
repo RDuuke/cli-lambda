@@ -68,6 +68,6 @@ sam build
 
 2. Ejecuta la función con un evento de prueba:
 
-``bash
+``` bash
 sam local invoke --event event.json
-``
+```

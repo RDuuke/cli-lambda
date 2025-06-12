@@ -7,6 +7,7 @@ from jinja2 import Environment, FileSystemLoader
 TEMPLATES_DIR = Path(__file__).parent / "templates/java"
 
 def scaffold_java_lambda(name: str):
+    validate_dependencies()  # 🔒 Verifica antes de continuar
     base_path = Path(name)
     project_name = name.replace("lda-", "").lower()
     if base_path.exists():
@@ -72,3 +73,25 @@ def render_pipeline_file(destination_dir: Path, name: str):
 
     output = template.render(name=name)
     (destination_dir / "azure-pipelines.yml").write_text(output, encoding="utf-8")
+
+
+def validate_dependencies():
+    required_tools = {
+        "java": "Java 11+",
+        "mvn": "Apache Maven",
+        "docker": "Docker",
+        "sam": "AWS SAM CLI"
+    }
+
+    missing = []
+    for tool, desc in required_tools.items():
+        if shutil.which(tool) is None:
+            missing.append(f"{tool} ({desc})")
+
+    if missing:
+        typer.echo("❌ Faltan las siguientes dependencias requeridas:")
+        for item in missing:
+            typer.echo(f"   - {item}")
+        raise typer.Exit(code=1)
+    else:
+        typer.echo("✅ Todas las dependencias requeridas están instaladas.")
