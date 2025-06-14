@@ -54,7 +54,23 @@ Verificar que el CLI funciona
 cli_lambda --help
 ```
 
+## ⚙️ Configuración del entorno (env.json)
 
+Para generar automáticamente el script `setup-codeartifact.ps1`, debes configurar tus credenciales de CodeArtifact en un archivo `env.json` ubicado dentro de la carpeta `cli_lambda/`.
+
+Ejemplo
+
+``` json
+{
+  "domain": "iris",
+  "domain_owner": "713823698889",
+  "region": "us-east-1",
+  "repo_name": "mvn-internal",
+  "aws_profile": "dev-tools",
+  "server_id": "iris-mvn-internal"
+}
+```
+Este archivo será utilizado por el CLI para renderizar dinámicamente los valores necesarios para autenticar Maven con CodeArtifact.
 
 ## 🧪 Cómo usarlo
 
@@ -73,6 +89,8 @@ lda-MiLambdaJava/
 ├── pom.xml
 ├── template.yaml
 ├── event.json
+├── setup-codeartifact.ps1
+├── settings-codeartifact.xml
 ├── src/
 │   ├── application/
 │   ├── domain/
@@ -98,3 +116,50 @@ sam build
 ``` bash
 sam local invoke --event event.json
 ```
+
+### 🛠️ Ejecutar el script para configurar CodeArtifact
+
+Antes de compilar o ejecutar tests si usas dependencias privadas, debes generar el archivo `settings-codeartifact.xml` ejecutando el siguiente script:
+
+```powershell
+./setup-codeartifact.ps1
+```
+
+Este script:
+
+- Solicita un token temporal a AWS CodeArtifact
+
+- Genera `settings-codeartifact.xml` con las credenciales necesarias
+
+- Permite que Maven pueda descargar dependencias privadas desde el repositorio `iris-mvn-internal`
+
+### ✅ Ejecutar pruebas unitarias
+
+Si usas dependencias internas de IRIS, recuerda compilar con el archivo settings-codeartifact.xml:
+``` bash
+mvn test --settings settings-codeartifact.xml
+```
+
+Si no usas dependencias internas, puedes ejecutar simplemente:
+``` bash
+mvn test
+```
+
+### ℹ️ Agregar dependencias IRIS (opcional)
+Si necesitas bibliotecas internas de IRIS, agrégalas al pom.xml como cualquier dependencia de Maven:
+
+``` xml
+<dependency>
+  <groupId>com.iris</groupId>
+  <artifactId>iris-core-utils</artifactId>
+  <version>1.4.2</version>
+</dependency>
+```
+
+Estas estarán disponibles si generaste previamente el archivo settings-codeartifact.xml con el script:
+
+``` bash
+./setup-codeartifact.ps1
+```
+
+---

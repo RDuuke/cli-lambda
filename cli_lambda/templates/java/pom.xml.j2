@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.{{name}}</groupId>
-  <artifactId>{{name}}</artifactId>
+  <groupId>com.{{package_name}}</groupId>
+  <artifactId>{{package_name}}</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>{{name}}</name>
+  <name>{{package_name}}</name>
   <url>http://www.example.com</url>
 
   <properties>
@@ -81,6 +81,13 @@
       <version>2.17.60</version>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>iris-mvn-internal</id>
+      <url>https://iris-713823698889.d.codeartifact.us-east-1.amazonaws.com/maven/mvn-internal/</url>
+    </repository>
+  </repositories>
 
   <build>
     <plugins>

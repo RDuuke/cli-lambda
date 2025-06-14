@@ -1,12 +1,31 @@
-package {{package}};
+package com.{{ package_name }};
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import java.util.Map;
+import com.{{ package_name }}.dto.InputDto;
+import com.{{ package_name }}.dto.OutputDto;
+import com.{{ package_name }}.dto.ResponseEntity;
+import com.{{ package_name }}.dto.StatusCode;
 
-public class Handler implements RequestHandler<Map<String, Object>, Response> {
+/**
+ * Manejador principal de la función Lambda.
+ * 
+ * InputDto representa los datos recibidos.
+ * OutputDto representa la estructura de salida.
+ * ResponseEntity encapsula el código de estado HTTP y el cuerpo de la respuesta.
+ */
+public class Handler implements RequestHandler<InputDto, ResponseEntity<OutputDto>> {
+
     @Override
-    public Response handleRequest(Map<String, Object> input, Context context) {
-        return new Response(200, "Funciona desde SAM local!");
+    public ResponseEntity<OutputDto> handleRequest(InputDto input, Context context) {
+        String name = input.getMessage() != null ? input.getMessage() : "Unknown";
+
+        OutputDto output = new OutputDto();
+        output.setMessage("Hello, " + name);
+
+        ResponseEntity<OutputDto> response = new ResponseEntity<>();
+        response.setStatusCode(StatusCode.OK.getCode());
+        response.setBody(output);
+        return response;
     }
 }

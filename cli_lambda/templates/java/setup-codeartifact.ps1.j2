@@ -1,0 +1,53 @@
+# Configuración de CodeArtifact
+$domain = '{{ domain }}'
+$domainOwner = '{{ domain_owner }}'
+$region = '{{ region }}'
+$repoName = '{{ repo_name }}'
+$awsProfile = '{{ aws_profile }}'
+
+Write-Host '🔐 Obteniendo token de CodeArtifact...'
+$token = aws codeartifact get-authorization-token `
+  --domain $domain `
+  --domain-owner $domainOwner `
+  --region $region `
+  --query authorizationToken `
+  --output text `
+  --profile $awsProfile
+
+if (-not $token) {
+    Write-Error '❌ No se pudo obtener el token de autorización.'
+    exit 1
+}
+
+Write-Host '📝 Generando archivo settings-codeartifact.xml...'
+$settingsXml = @"
+<settings xmlns='http://maven.apache.org/SETTINGS/1.0.0'
+          xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+          xsi:schemaLocation='http://maven.apache.org/SETTINGS/1.0.0
+                              http://maven.apache.org/xsd/settings-1.0.0.xsd'>
+  <servers>
+    <server>
+        <id>{{ server_id }}</id>
+        <username>aws</username>
+        <password>$token</password>
+    </server>
+  </servers>
+  <profiles>
+    <profile>
+        <id>{{ server_id }}</id>
+        <activation>
+        <activeByDefault>true</activeByDefault>
+        </activation>
+        <repositories>
+        <repository>
+            <id>{{ server_id }}</id>
+            <url>https://{{ domain }}-{{ domain_owner }}.d.codeartifact.{{ region }}.amazonaws.com/maven/{{ repo_name }}/</url>
+        </repository>
+        </repositories>
+    </profile>
+  </profiles>
+</settings>
+"@
+
+$settingsXml | Out-File -FilePath 'settings-codeartifact.xml' -Encoding utf8 -Force
+Write-Host '✅ settings-codeartifact.xml creado correctamente.'

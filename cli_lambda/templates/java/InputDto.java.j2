@@ -1,0 +1,26 @@
+package com.{{ package_name }}.dto;
+
+/**
+ * Clase de entrada para la Lambda.
+ *
+ * ⚠️ Este DTO debe ser modificado según los datos que espera tu Lambda.
+ * Por ejemplo, si se invoca desde API Gateway con un POST:
+ * {
+ *   "message": "Hola mundo"
+ * }
+ *
+ * Puedes agregar más campos según tu necesidad.
+ */
+public class InputDto {
+
+    // Ejemplo de campo, modificar según el caso de uso real
+    private String message;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+}

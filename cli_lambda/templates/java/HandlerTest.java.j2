@@ -1,19 +1,38 @@
-package {{package}};
+package com.{{ package_name }};
 
-import org.junit.Test;
-import java.util.HashMap;
-import java.util.Map;
-import static org.junit.Assert.*;
+import com.{{ package_name }}.dto.InputDto;
+import com.{{ package_name }}.dto.OutputDto;
+import com.{{ package_name }}.dto.ResponseEntity;
+import com.{{ package_name }}.dto.StatusCode;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HandlerTest {
 
     @Test
-    public void testHandleRequestReturns200() {
+    public void shouldRespondWithGreeting() {
+        // Arrange
         Handler handler = new Handler();
-        Map<String, Object> input = new HashMap<>();
-        Response response = handler.handleRequest(input, null);
+        InputDto input = new InputDto();
+        input.setMessage("Iris");
 
-        assertEquals(200, response.getStatusCode());
-        assertEquals("Funciona desde SAM local!", response.getMessage());
+        // Act
+        ResponseEntity<OutputDto> response = handler.handleRequest(input, null);
+
+        // Assert
+        assertEquals(StatusCode.OK.getCode(), response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Hello, Iris", response.getBody().getMessage());
+    }
+
+    @Test
+    public void shouldHandleNullMessageGracefully() {
+        Handler handler = new Handler();
+        InputDto input = new InputDto(); // message es null
+
+        ResponseEntity<OutputDto> response = handler.handleRequest(input, null);
+
+        assertEquals(StatusCode.OK.getCode(), response.getStatusCode());
+        assertEquals("Hello, Unknown", response.getBody().getMessage());
     }
 }
