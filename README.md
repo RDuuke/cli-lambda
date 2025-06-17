@@ -62,12 +62,12 @@ Ejemplo
 
 ``` json
 {
-  "domain": "iris",
-  "domain_owner": "713823698889",
+  "domain": "my-domain",
+  "domain_owner": "000000000000",
   "region": "us-east-1",
-  "repo_name": "mvn-internal",
-  "aws_profile": "dev-tools",
-  "server_id": "iris-mvn-internal"
+  "repo_name": "my-mvn-repo",
+  "aws_profile": "default",
+  "server_id": "my-mvn-repo"
 }
 ```
 Este archivo será utilizado por el CLI para renderizar dinámicamente los valores necesarios para autenticar Maven con CodeArtifact.
