@@ -1,20 +1,53 @@
-cli_lambda.egg-info
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.db
-*.sqlite3
-*.log
-*.pot
-*.pyc
-*.pyo
-*.pyd
-*.db
-*.sqlite3
-*.log
-*.pot
-
-lda-*
+*.egg-info/
+build/
+dist/
 venv/
+.pytest_cache/
+
+# Node.js
+node_modules/
+dist/
+coverage/
+.env
+.env.example
+
+# Java / Maven / Quarkus
+target/
+.idea/
+.project
+.classpath
+.settings/
+*.iml
+*.ipr
+*.iws
+
+# Logs
+*.log
+
+# Databases
+*.db
+*.sqlite3
+
+# Temporary files
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Generated Lambda projects
+lda-*
+
+# CLI specific
 */env.json
+
+
+chat.txt
+DIARIO.md
+GEMINI.md

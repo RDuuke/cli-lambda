@@ -1,0 +1,10 @@
+const useCase = require("../../application/usecase");
+
+exports.handler = async (event) => {
+    const message = useCase.getHelloMessage();
+    const response = {
+        statusCode: 200,
+        body: JSON.stringify(message),
+    };
+    return response;
+};

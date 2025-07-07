@@ -1,0 +1,82 @@
+# {{ project_name }}
+
+Este proyecto contiene una función de AWS Lambda desarrollada en TypeScript, siguiendo una arquitectura de capas para una clara separación de responsabilidades.
+
+## 🚀 Requisitos Previos
+
+Antes de empezar, asegúrate de tener instalado:
+
+- Node.js (versión 18 o superior)
+- npm o yarn
+- AWS CLI
+
+## 📦 Gestión de Dependencias con AWS CodeArtifact
+
+Este proyecto utiliza AWS CodeArtifact para gestionar las dependencias de npm. Para poder instalar los paquetes, primero debes configurar tu cliente de npm para autenticarte con CodeArtifact. Ejecuta el siguiente comando, reemplazando los valores de placeholder:
+
+```bash
+aws codeartifact login --tool npm --repository <TU_REPOSITORIO> --domain <TU_DOMINIO_CODEARTIFACT> --domain-owner <ID_DE_CUENTA_AWS>
+```
+
+Una vez configurado, puedes instalar las dependencias con:
+
+```bash
+npm install
+```
+
+## 🏗️ Arquitectura de Capas
+
+El proyecto está estructurado en tres capas principales para separar la lógica de negocio de los detalles de implementación.
+
+### 1. Domain
+- **Ubicación**: `src/domain`
+- **Propósito**: Contiene la lógica de negocio pura y las entidades del dominio. No debe tener dependencias de frameworks o servicios externos (AWS, bases de datos, etc.). Es el corazón de tu aplicación.
+- **Alias de importación**: `@domain/*`
+
+### 2. Application
+- **Ubicación**: `src/application`
+- **Propósito**: Orquesta los casos de uso. Es responsable de coordinar las operaciones del dominio y de conectar la infraestructura con el dominio. Aquí se define qué hace la aplicación.
+- **Alias de importación**: `@application/*`
+
+### 3. Infrastructure
+- **Ubicación**: `src/infrastructure`
+- **Propósito**: Implementa los detalles tecnológicos. Contiene el handler de la Lambda, clientes de servicios de AWS (como S3, DynamoDB), repositorios de bases de datos y cualquier otro código que interactúe con el mundo exterior.
+- **Alias de importación**: `@infrastructure/*`
+
+## 💻 Cómo Programar
+
+El flujo de desarrollo típico es el siguiente:
+
+1.  **Define la lógica en el Dominio**: Empieza creando los modelos y la lógica de negocio en la capa `domain`.
+2.  **Crea un Caso de Uso**: En la capa `application`, crea un caso de uso que importe y utilice los modelos del dominio para cumplir un objetivo específico.
+3.  **Implementa la Infraestructura**: En la capa `infrastructure`, crea el handler de la Lambda. El handler debe recibir el evento de AWS, llamar al caso de uso correspondiente en la capa de aplicación y devolver la respuesta.
+
+Gracias a los alias configurados en `tsconfig.json` y `jest.config.ts`, puedes importar módulos de forma limpia y desacoplada:
+
+```typescript
+// Ejemplo en application/usecase.ts
+import { MyModel } from '@domain/my-model';
+
+// Ejemplo en infrastructure/handler.ts
+import { myUseCase } from '@application/my-use-case';
+```
+
+## 🧪 Pruebas
+
+El proyecto está configurado con Jest para pruebas unitarias y de integración. Los archivos de prueba deben ubicarse en el directorio `test/` en la raíz del proyecto.
+
+Para ejecutar las pruebas, usa:
+
+```bash
+npm run test
+```
+
+## 📜 Scripts Disponibles
+
+- `npm run build`: Transpila el código TypeScript a JavaScript usando `esbuild`.
+- `npm run test`: Ejecuta las pruebas con Jest.
+- `npm run lint`: Analiza el código en busca de errores de estilo con ESLint.
+
+## 🚀 Despliegue
+
+El despliegue de esta función Lambda se gestiona a través del pipeline de Azure DevOps definido en el archivo `azure-pipelines.yml`.

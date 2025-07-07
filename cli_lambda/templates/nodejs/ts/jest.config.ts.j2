@@ -1,0 +1,29 @@
+import { Config } from 'jest'
+
+const config: Config = {
+  clearMocks: true,
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  coveragePathIgnorePatterns: [
+    '<rootDir>/node_modules',
+    '<rootDir>/jest.config.ts',
+    '<rootDir>/setup-jest.ts'
+  ],
+  coverageProvider: 'v8',
+  preset: 'ts-jest',
+  setupFiles: ['<rootDir>/setup-jest.ts'],
+  testEnvironment: 'jest-environment-node',
+  setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
+  testPathIgnorePatterns: [
+    '<rootDir>/node_modules',
+    '<rootDir>/jest.config.ts',
+    '<rootDir>/setup-jest.ts'
+  ],
+  moduleNameMapper: {
+    '^@application/(.*)$': '<rootDir>/src/application/$1',
+    '^@domain/(.*)$': '<rootDir>/src/domain/$1',
+    '^@infrastructure/(.*)$': '<rootDir>/src/infrastructure/$1'
+  }
+}
+
+export default config

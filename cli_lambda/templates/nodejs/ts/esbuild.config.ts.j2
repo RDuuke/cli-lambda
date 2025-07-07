@@ -1,0 +1,19 @@
+import * as esbuild from 'esbuild'
+
+const isProduction = process.env.NODE_ENV === 'production';
+
+esbuild
+  .build({
+    entryPoints: ['infrastructure/handler.ts'],
+    bundle: true,
+    minify: isProduction,
+    sourcemap: !isProduction,
+    platform: 'node',
+    target: 'ES2023',
+    outfile: 'dist/index.js',
+    loader: {
+      '.node': 'file'
+    },
+    external: ['aws-sdk', /* Si no se usa pg-native, se puede comentar o eliminar esta línea. 'pg-native' */]
+  })
+  .catch(() => process.exit(1))

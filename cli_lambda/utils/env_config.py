@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 def load_env_config() -> dict:
-    config_path = Path(__file__).parent / "env.json"
+    config_path = Path(__file__).parent.parent / "env.json"
     if not config_path.exists():
         raise FileNotFoundError("Archivo env.json no encontrado en cli_lambda/. Agrega uno con configuración de CodeArtifact.")
     

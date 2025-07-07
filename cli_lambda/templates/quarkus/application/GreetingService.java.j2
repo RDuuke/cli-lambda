@@ -1,0 +1,13 @@
+package org.acme.application;
+
+import org.acme.domain.Greeting;
+
+import javax.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
+public class GreetingService {
+
+    public String getGreeting() {
+        return Greeting.getHello();
+    }
+}

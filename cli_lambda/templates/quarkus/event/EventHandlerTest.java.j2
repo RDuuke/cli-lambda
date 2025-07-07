@@ -1,0 +1,37 @@
+package org.acme.infrastructure;
+
+import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.mockito.InjectMock;
+import org.acme.application.GreetingService;
+import org.acme.domain.InputDto;
+import org.acme.domain.OutputDto;
+import org.junit.jupiter.api.Test;
+
+import javax.inject.Inject;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+
+@QuarkusTest
+public class EventHandlerTest {
+
+    @Inject
+    EventHandler eventHandler;
+
+    @InjectMock
+    GreetingService greetingService;
+
+    @Test
+    public void testHandleRequest() {
+        // Arrange
+        InputDto input = new InputDto();
+        input.setName("Test");
+        when(greetingService.greeting("Test")).thenReturn(new OutputDto("Hello, Test"));
+
+        // Act
+        OutputDto output = eventHandler.handleRequest(input, null);
+
+        // Assert
+        assertEquals("Hello, Test", output.getMessage());
+    }
+}

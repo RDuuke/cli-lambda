@@ -1,11 +1,12 @@
-package com.{{ package_name }};
+package com.{{ package_name }}.infrastructure;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.{{ package_name }}.dto.InputDto;
-import com.{{ package_name }}.dto.OutputDto;
-import com.{{ package_name }}.dto.ResponseEntity;
-import com.{{ package_name }}.dto.StatusCode;
+import com.{{ package_name }}.application.usecase.HelloUseCase;
+import com.{{ package_name }}.domain.dto.InputDto;
+import com.{{ package_name }}.domain.dto.OutputDto;
+import com.{{ package_name }}.domain.dto.ResponseEntity;
+import com.{{ package_name }}.domain.dto.StatusCode;
 
 /**
  * Manejador principal de la función Lambda.
@@ -16,12 +17,14 @@ import com.{{ package_name }}.dto.StatusCode;
  */
 public class Handler implements RequestHandler<InputDto, ResponseEntity<OutputDto>> {
 
+    private final HelloUseCase helloUseCase = new HelloUseCase();
+
     @Override
     public ResponseEntity<OutputDto> handleRequest(InputDto input, Context context) {
-        String name = input.getMessage() != null ? input.getMessage() : "Unknown";
+        String message = helloUseCase.getHelloMessage();
 
         OutputDto output = new OutputDto();
-        output.setMessage("Hello, " + name);
+        output.setMessage(message);
 
         ResponseEntity<OutputDto> response = new ResponseEntity<>();
         response.setStatusCode(StatusCode.OK.getCode());

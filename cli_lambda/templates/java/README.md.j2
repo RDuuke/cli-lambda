@@ -1,60 +1,83 @@
-# {{ project_name | capitalize }} - Lambda Java
+# {{ project_name }}
 
-## 🚀 Cómo ejecutar localmente
+Este proyecto contiene una función de AWS Lambda desarrollada en Java, siguiendo una arquitectura de capas para una clara separación de responsabilidades.
 
-### 1. Instala las dependencias necesarias
+## 🚀 Requisitos Previos
 
-- Java 11+
+Antes de empezar, asegúrate de tener instalado:
+
+- Java Development Kit (JDK) 11 o superior
 - Apache Maven
-- Docker
-- AWS SAM CLI
+- AWS CLI
 
-### 2. Autenticarse en CodeArtifact
+## 📦 Gestión de Dependencias con AWS CodeArtifact
 
-Ejecuta el siguiente script en PowerShell para generar `settings-codeartifact.xml`:
-
-```powershell
-./setup-codeartifact.ps1
-```
-Esto autenticará Maven con CodeArtifact usando tu perfil de AWS.
-
-### 3. Compilar el proyecto
+Este proyecto utiliza AWS CodeArtifact para gestionar las dependencias de Maven. Para poder descargar los paquetes, primero debes configurar tu cliente de Maven para autenticarte con CodeArtifact. Ejecuta el siguiente comando, reemplazando los valores de placeholder:
 
 ```bash
-mvn clean package --settings settings-codeartifact.xml
+aws codeartifact get-repository-endpoint --domain <TU_DOMINIO_CODEARTIFACT> --domain-owner <ID_DE_CUENTA_AWS> --repository <TU_REPOSITORIO> --format maven
 ```
 
-### 4. Ejecutar el proyecto localmente
+Este comando te dará la configuración que debes añadir a tu archivo `~/.m2/settings.xml`.
+
+Una vez configurado, puedes compilar el proyecto y descargar las dependencias con:
+
 ```bash
-sam build
-``
-### 5. Invocar la función Lambda localmente
-sam local invoke {{ resource_name }} --event event.json
-```
-### 6. Iniciar el API localmente
-```bash
-sam local start-api --port 3000
+mvn clean install
 ```
 
-### 7. Ejecutar pruebas unitarias
+## 🏗️ Arquitectura de Capas
 
-#### Con dependencias IRIS
+El proyecto está estructurado en tres capas principales para separar la lógica de negocio de los detalles de implementación.
+
+### 1. Domain
+- **Ubicación**: `src/main/java/com/{{package_name}}/domain`
+- **Propósito**: Contiene la lógica de negocio pura, las entidades (Modelos) y los Data Transfer Objects (DTOs). No debe tener dependencias de frameworks o servicios externos.
+
+### 2. Application
+- **Ubicación**: `src/main/java/com/{{package_name}}/application`
+- **Propósito**: Orquesta los casos de uso (Use Cases). Es responsable de coordinar las operaciones del dominio.
+
+### 3. Infrastructure
+- **Ubicación**: `src/main/java/com/{{package_name}}/infrastructure`
+- **Propósito**: Implementa los detalles tecnológicos. Contiene el Handler de la Lambda, clientes de servicios de AWS, y cualquier otro código que interactúe con el mundo exterior.
+
+## 💻 Cómo Programar
+
+El flujo de desarrollo típico es el siguiente:
+
+1.  **Define el Dominio**: Crea los modelos y DTOs en la capa `domain`.
+2.  **Crea un Caso de Uso**: En la capa `application`, implementa la lógica de negocio en un `UseCase`.
+3.  **Implementa la Infraestructura**: En la capa `infrastructure`, el `Handler` recibe el evento de AWS, llama al `UseCase` correspondiente y devuelve la respuesta.
+
+## ✅ Calidad de Código
+
+Este proyecto utiliza **Checkstyle** para asegurar un estilo de código consistente. El análisis se ejecuta automáticamente cada vez que compilas el proyecto. Si hay violaciones de estilo, la compilación fallará.
+
+Puedes ejecutar el análisis manualmente con:
+
 ```bash
-mvn clean package --settings settings-codeartifact.xml
+mvn checkstyle:check
 ```
-#### Sin dependencias IRIS
+
+## 🧪 Pruebas
+
+El proyecto está configurado con **JUnit 5** y **Mockito** para pruebas unitarias. Los archivos de prueba se encuentran en `src/test/java`.
+
+Para ejecutar las pruebas, usa:
+
+```bash
+mvn test
+```
+
+## 📦 Empaquetado y Despliegue
+
+Para empaquetar la aplicación en un archivo JAR listo para desplegar en AWS Lambda, ejecuta:
+
 ```bash
 mvn clean package
 ```
 
-### 8. Agregar bibliotecas internas de IRIS (opcional)
+El JAR final se encontrará en el directorio `target/`.
 
-Si tu Lambda necesita consumir una librería interna del ecosistema IRIS publicada en CodeArtifact, agrégala manualmente al `pom.xml` dentro de la sección `<dependencies>`. Por ejemplo:
-
-```xml
-<dependency>
-    <groupId>co.iris.utils</groupId>
-    <artifactId>siif</artifactId>
-    <version>1.0.4</version>
-</dependency>
-```
+El despliegue se puede realizar utilizando el archivo `template.yaml` y los comandos de AWS SAM o la consola de AWS.

@@ -1,0 +1,19 @@
+package com.{{ package_name }}.application.usecase;
+
+import com.{{ package_name }}.domain.dto.InputDto;
+import com.{{ package_name }}.domain.dto.OutputDto;
+import com.{{ package_name }}.domain.model.HelloModel;
+
+public class HelloUseCase {
+
+    private final HelloModel helloModel;
+
+    public HelloUseCase() {
+        this.helloModel = new HelloModel();
+    }
+
+    public OutputDto execute(InputDto input) {
+        String message = helloModel.createGreeting(input.getMessage());
+        return new OutputDto(message);
+    }
+}

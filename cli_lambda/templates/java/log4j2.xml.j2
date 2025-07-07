@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Lambda name="Lambda">
+            <PatternLayout>
+                <JsonTemplateLayout eventTemplateUri="classpath:LambdaJsonLayout.json"/>
+            </PatternLayout>
+        </Lambda>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Lambda"/>
+        </Root>
+    </Loggers>
+</Configuration>
