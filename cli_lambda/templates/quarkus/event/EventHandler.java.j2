@@ -1,0 +1,22 @@
+package org.acme.infrastructure;
+
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
+import org.acme.application.GreetingService;
+import org.acme.domain.InputDto;
+import org.acme.domain.OutputDto;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+@Named("eventHandler")
+public class EventHandler implements RequestHandler<InputDto, OutputDto> {
+
+    @Inject
+    GreetingService service;
+
+    @Override
+    public OutputDto handleRequest(InputDto input, Context context) {
+        return service.greeting(input.getName());
+    }
+}

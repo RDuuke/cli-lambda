@@ -1,165 +1,104 @@
-# CLI Lambda Generator
+# IRIS CLI 🚀
 
-Generador de scaffolding para funciones [AWS Lambda](https://aws.amazon.com/lambda/) en [Java](https://www.java.com/) usando [AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) y arquitectura hexagonal. Ideal para pruebas locales con Docker.
+El CLI de IRIS es una herramienta de línea de comandos diseñada para estandarizar y acelerar la creación de funciones AWS Lambda en IRIS. Genera proyectos listos para producción con una arquitectura de capas bien definida y las mejores prácticas de la industria.
 
-Compatible con:
-- [Java 11 (Temurin)](https://adoptium.net/)
-- [Maven](https://maven.apache.org/)
-- [Docker](https://www.docker.com/)
-- [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)
+## ✨ Características Principales
 
+- **Arquitectura de Capas**: Todos los proyectos se generan con una separación clara entre `Domain`, `Application` e `Infrastructure`.
+- **Calidad de Código Integrada**: Configuraciones listas para usar de **ESLint** (TypeScript), y **Checkstyle** (Java).
+- **Testing desde el Día Cero**: Proyectos listos para pruebas con **Jest** (TypeScript) y **JUnit 5 + Mockito** (Java).
+- **Logging Estructurado**: Logs en formato JSON para una mejor observabilidad en CloudWatch.
+- **Soporte para Múltiples Tecnologías**: Genera proyectos para Node.js (TypeScript), Java (JVM 11/21) y Quarkus (JVM 11/21, GraalVM).
 
-## ✅ Requisitos
+## ⚙️ Instalación
 
-- [Java 11](https://adoptium.net/)
-- [Apache Maven](https://maven.apache.org/)
-- [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [Python 3.8+](https://www.python.org/)
+1.  **Clona el repositorio**:
+    ```bash
+    git clone <URL_DEL_REPOSITORIO>
+    cd <NOMBRE_DEL_REPOSITORIO>
+    ```
 
-Para probar funciones localmente se requiere Docker configurado correctamente con red y permisos.
+2.  **Crea y activa un entorno virtual de Python**:
+    ```bash
+    python -m venv venv
+    # En Windows
+    venv\Scripts\activate
+    # En macOS/Linux
+    source venv/bin/activate
+    ```
 
-## 🐍 Uso del entorno virtual
-Se recomienda utilizar un entorno virtual para mantener las dependencias del proyecto aisladas.
+3.  **Instala el CLI en modo editable**:
+    ```bash
+    pip install --editable .
+    ```
 
-1. Crear el entorno virtual
+4.  **Verifica la instalación**:
+    ```bash
+    iris --help
+    ```
 
-``` bash
-python -m venv venv
-```
+## 🚀 Uso y Ejemplos
 
-2. Activar el entorno virtual
+El comando principal es `iris scaffold`. A continuación se muestran ejemplos para cada tipo de proyecto.
 
--  En Windows:
-``` bash
-venv\Scripts\activate
-```
-- En Linux/macOS:
+### 1. Node.js (TypeScript)
 
-``` bash
-source venv/bin/activate
-```
+Genera un proyecto de Node.js con TypeScript, Jest, ESLint y esbuild.
 
-## 🔧 Instalación
-
-Clona el repositorio y usa instalación editable con [pip](https://pip.pypa.io/):
-
+**Comando:**
 ```bash
-pip install --editable .
-
+iris scaffold node --name mi-lambda-ts --lang ts --project-prefix CL00079-CustomerInfoSiif
 ```
 
-Verificar que el CLI funciona
+### 2. Java (JVM)
+
+Genera un proyecto de Java con Maven, JUnit 5, Mockito, Checkstyle y logging JSON. Puedes especificar la versión de Java (11 o 21).
+
+**Comandos:**
 ```bash
-cli_lambda --help
+# Java 11 (por defecto)
+iris scaffold java --name mi-lambda-java-11 --project-prefix CL00079-CustomerInfoSiif
+
+# Java 21
+iris scaffold java --name mi-lambda-java-21 --project-prefix CL00079-CustomerInfoSiif --java-version 21
 ```
 
-## ⚙️ Configuración del entorno (env.json)
+### 3. Quarkus (Invocación por Evento)
 
-Para generar automáticamente el script `setup-codeartifact.ps1`, debes configurar tus credenciales de CodeArtifact en un archivo `env.json` ubicado dentro de la carpeta `cli_lambda/`.
+Genera una Lambda de Quarkus que responde a invocaciones directas (ej. SQS, S3). Puedes especificar la versión de Java (11 o 21) y si es una imagen nativa de GraalVM.
 
-Ejemplo
-
-``` json
-{
-  "domain": "my-domain",
-  "domain_owner": "000000000000",
-  "region": "us-east-1",
-  "repo_name": "my-mvn-repo",
-  "aws_profile": "default",
-  "server_id": "my-mvn-repo"
-}
-```
-Este archivo será utilizado por el CLI para renderizar dinámicamente los valores necesarios para autenticar Maven con CodeArtifact.
-
-## 🧪 Cómo usarlo
-
-Una vez instalado, puedes ejecutar el comando para generar una nueva función Lambda en Java:
-
+**Comandos:**
 ```bash
-cli_lambda java lda-MiLambdaJava
+# Quarkus JVM 11 (por defecto)
+iris scaffold quarkus --name mi-lambda-quarkus-evento-11 --project-prefix CL00079-CustomerInfoSiif
+
+# Quarkus JVM 21
+iris scaffold quarkus --name mi-lambda-quarkus-evento-21 --project-prefix CL00079-CustomerInfoSiif --java-version 21
+
+# Quarkus GraalVM (imagen nativa)
+iris scaffold quarkus --name mi-lambda-quarkus-graal --project-prefix CL00079-CustomerInfoSiif --graal
 ```
 
-Esto generará un proyecto con la siguiente estructura:
+### 4. Quarkus (API REST)
 
-### 📁 Estructura generada
+Genera una API REST completa con Quarkus, lista para ser expuesta a través de API Gateway. Puedes especificar la versión de Java (11 o 21) y si es una imagen nativa de GraalVM.
 
-```text
-lda-MiLambdaJava/
-├── pom.xml
-├── template.yaml
-├── event.json
-├── setup-codeartifact.ps1
-├── settings-codeartifact.xml
-├── src/
-│   ├── application/
-│   ├── domain/
-│   ├── infrastructure/
-│   ├── main/
-│   │   └── java/com/milambdajava/
-│   │       ├── Handler.java
-│   │       └── Response.java
-│   └── test/
-│       └── com/milambdajava/
-│           └── HandlerTest.java
+**Comandos:**
+```bash
+# Quarkus REST JVM 11 (por defecto)
+iris scaffold quarkus --name mi-api-quarkus-11 --type rest --project-prefix CL00079-CustomerInfoSiif
+
+# Quarkus REST JVM 21
+iris scaffold quarkus --name mi-api-quarkus-21 --type rest --project-prefix CL00079-CustomerInfoSiif --java-version 21
+
+# Quarkus REST GraalVM (imagen nativa)
+iris scaffold quarkus --name mi-api-quarkus-graal --type rest --project-prefix CL00079-CustomerInfoSiif --graal
 ```
 
-### ✨ Para probar la función localmente con SAM:
+## 🤝 Contribuciones
 
-1. Compila el proyecto:
-``` bash
-sam build
-```
+Las contribuciones son bienvenidas. Si deseas añadir una nueva plantilla o mejorar una existente, por favor sigue el flujo de trabajo estándar de Git (crea una rama, haz tus cambios y abre un Pull Request).
 
-2. Ejecuta la función con un evento de prueba:
+## 📄 Licencia
 
-``` bash
-sam local invoke --event event.json
-```
-
-### 🛠️ Ejecutar el script para configurar CodeArtifact
-
-Antes de compilar o ejecutar tests si usas dependencias privadas, debes generar el archivo `settings-codeartifact.xml` ejecutando el siguiente script:
-
-```powershell
-./setup-codeartifact.ps1
-```
-
-Este script:
-
-- Solicita un token temporal a AWS CodeArtifact
-
-- Genera `settings-codeartifact.xml` con las credenciales necesarias
-
-- Permite que Maven pueda descargar dependencias privadas desde el repositorio `iris-mvn-internal`
-
-### ✅ Ejecutar pruebas unitarias
-
-Si usas dependencias internas de IRIS, recuerda compilar con el archivo settings-codeartifact.xml:
-``` bash
-mvn test --settings settings-codeartifact.xml
-```
-
-Si no usas dependencias internas, puedes ejecutar simplemente:
-``` bash
-mvn test
-```
-
-### ℹ️ Agregar dependencias IRIS (opcional)
-Si necesitas bibliotecas internas de IRIS, agrégalas al pom.xml como cualquier dependencia de Maven:
-
-``` xml
-<dependency>
-  <groupId>com.iris</groupId>
-  <artifactId>iris-core-utils</artifactId>
-  <version>1.4.2</version>
-</dependency>
-```
-
-Estas estarán disponibles si generaste previamente el archivo settings-codeartifact.xml con el script:
-
-``` bash
-./setup-codeartifact.ps1
-```
-
----
+Este proyecto es propiedad de IRIS. Uso interno únicamente.

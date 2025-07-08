@@ -1,0 +1,10 @@
+package com.{{ package_name }}.domain.model;
+
+public class HelloModel {
+    public String createGreeting(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            name = "Unknown";
+        }
+        return "Hello, " + name;
+    }
+}

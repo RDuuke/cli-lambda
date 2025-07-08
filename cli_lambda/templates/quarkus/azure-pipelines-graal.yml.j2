@@ -1,0 +1,50 @@
+name: $(date:yyyyMMdd)$(rev:.r)
+variables:
+- name: SourcesDirectory
+  value: {{ project_name }}
+- name: SonarProjectKey
+  value: {{ project_prefix }}-{{ project_name }}
+- name: SonarExclusions
+  value: /deploy, **/deploy/**, /test/**, /src/test/**, **/*.spec.js, **/config/**
+- name: AppType
+  value: java
+- name: PomFileDir
+  value: {{ project_name }}
+- name: SonarJavaBinaries
+  value: ./target/classes/**
+- name: SonarJavaSource
+  value: ./src/main/java
+- name: FunctionFullName
+  value: {{ project_prefix }}-{{ project_name }}-ENV-Lambda
+resources:
+  repositories:
+  - repository: templates
+    type: git
+    name: Iris/CL00018-AzureDevops-Apps
+    ref: refs/heads/hotfix/47783
+trigger:
+  batch: 'true'
+  branches:
+    include:
+    - master
+    - release
+    - develop
+  paths:
+    include:
+    - {{ project_name }}/*
+    exclude:
+    - {{ project_name }}/README.md
+stages:
+- template: /CI/BuildLambdaJava21Graal.yml@templates
+  parameters:
+    SourcesDirectory: $(SourcesDirectory)
+    SonarProjectKey: $(SonarProjectKey)
+    SonarExclusions: $(SonarExclusions)
+    AppType: $(AppType)
+    PomFileDir: $(PomFileDir)
+    SonarJavaBinaries: $(SonarJavaBinaries)
+    SonarJavaSource: $(SonarJavaSource)
+- template: /CD/DeployLambda.yml@templates
+  parameters:
+    FunctionFullName: $(FunctionFullName)
+    SourcesDirectory: $(SourcesDirectory)

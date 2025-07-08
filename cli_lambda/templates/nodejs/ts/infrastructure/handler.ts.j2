@@ -1,0 +1,11 @@
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import { getHelloMessage } from "../../application/usecase";
+
+export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    const message = getHelloMessage();
+    const response = {
+        statusCode: 200,
+        body: JSON.stringify(message),
+    };
+    return response;
+};

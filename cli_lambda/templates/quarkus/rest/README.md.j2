@@ -1,0 +1,56 @@
+# {{ project_name }} - Quarkus REST API Lambda
+
+Este proyecto contiene una API REST desarrollada con Quarkus, diseñada para ser desplegada como una función de AWS Lambda y expuesta a través de API Gateway.
+
+## 🚀 Requisitos Previos
+
+- Java Development Kit (JDK) 11 o superior
+- Apache Maven
+- AWS CLI
+- AWS SAM CLI (Opcional, para pruebas locales)
+
+## 📦 Gestión de Dependencias con AWS CodeArtifact
+
+Configura tu `~/.m2/settings.xml` para usar el repositorio de CodeArtifact de IRIS.
+
+## 🏗️ Arquitectura de Capas
+
+- **Domain**: Lógica de negocio pura.
+- **Application**: Orquestación de casos de uso (Services).
+- **Infrastructure**: Implementación de los `Resource` (endpoints JAX-RS).
+
+## 💻 Modo de Desarrollo
+
+Quarkus ofrece un increíble modo de desarrollo en vivo. Para iniciarlo, ejecuta:
+
+```bash
+mvn quarkus:dev
+```
+
+Ahora puedes hacer peticiones a tu API en `http://localhost:8080` y los cambios que hagas en el código se reflejarán al instante.
+
+## 🧪 Pruebas
+
+Ejecuta las pruebas de la API (usando RestAssured) con:
+
+```bash
+mvn test
+```
+
+### Pruebas de Integración Locales (Opcional)
+
+Puedes iniciar un entorno local que simula API Gateway usando AWS SAM CLI:
+
+```bash
+sam local start-api
+```
+
+## 📦 Empaquetado y Despliegue
+
+Empaqueta la aplicación con:
+
+```bash
+mvn clean package
+```
+
+Despliega usando el archivo `template.yaml`, que ya está configurado para crear una API Gateway.

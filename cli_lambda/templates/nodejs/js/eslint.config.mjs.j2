@@ -1,0 +1,75 @@
+import globals from 'globals'
+import pluginJs from '@eslint/js'
+import jest from 'eslint-plugin-jest'
+import prettierPlugin from 'eslint-plugin-prettier'
+import prettierConfig from 'eslint-config-prettier'
+
+export default [
+  // Configuración base para todos los archivos JS/TS
+  {
+    files: ['src/**/*.{js,mjs,cjs}', 'test/**/*.{js,mjs,cjs}'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      'no-console': 'warn',
+      'no-debugger': 'error',
+      'max-len': ['error', { code: 120, ignoreComments: true, ignoreUrls: true }],
+      'object-curly-spacing': ['error', 'always'],
+      'semi': ['error', 'always'], // Punto y coma siempre
+      'indent': ['error', 4], // 4 espacios
+      'quotes': ['error', 'single'], // Comillas simples
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
+  },
+
+  // Configuración específica para archivos JavaScript
+  {
+    files: ['**/*.js'],
+    languageOptions: {
+      sourceType: 'commonjs',
+    },
+  },
+
+  // Configuración para Jest (pruebas)
+  {
+    files: ['test/**/*.{js,mjs,cjs}'],
+    ...jest.configs['flat/recommended'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
+    rules: {
+      ...jest.configs['flat/recommended'].rules,
+      'jest/prefer-expect-assertions': 'off',
+    },
+  },
+
+  // Integración con Prettier
+  {
+    plugins: {
+      prettier: prettierPlugin,
+    },
+    rules: {
+      'prettier/prettier': 'error',
+    },
+  },
+  prettierConfig,
+
+  // Ignorar archivos y directorios
+  {
+    ignores: [
+      'test/',
+      'dist/',
+      'coverage/',
+      'node_modules/',
+      'esbuild.config.ts',
+      'setup-jest.ts',
+      'tsconfig.json',
+      'tsconfig.eslint.json',
+    ],
+  },
+];

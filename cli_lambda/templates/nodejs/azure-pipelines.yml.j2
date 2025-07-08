@@ -1,0 +1,53 @@
+name: $(date:yyyyMMdd)$(rev:.r)
+variables:
+  - name: SourcesDirectory
+    value: lda-{{ project_name }}
+  - name: SonarProjectKey
+    value: {{ project_prefix }}-{{ project_name }}-lda
+  - name: SonarSources
+    value: src
+  - name: SonarExclusions
+    value: node_modules/**, /test/**, **/*.test.ts, **/config/*, /src/adapters/RDSClient/migrations/*, **/statusCode.ts, setup-jest.ts, tsconfig.json, tsconfig.eslint.json, esbuild.config.ts, jest.config.ts
+  - name: SonarCoveragePaths
+    value: coverage/lcov.info
+  - name: SonarCreateMaster
+    value: "0"
+  - name: UnitTestCommand
+    value: test
+  - name: AppType
+    value: tsc
+  - name: FunctionFullName
+    value: {{ project_prefix }}-{{ project_name }}-ENV-lda
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: Iris/CL00018-AzureDevops-Apps
+      ref: refs/heads/master
+trigger:
+  batch: "true"
+  branches:
+    include:
+      - master
+      - release
+      - develop
+  paths:
+    include:
+      - lda-{{ project_name }}/*
+    exclude:
+      - lda-{{ project_name }}/README.md
+stages:
+  - template: /CI/BuildNodejsEsbuild.yml@templates
+    parameters:
+      SourcesDirectory: $(SourcesDirectory)
+      SonarCoveragePaths: $(SonarCoveragePaths)
+      SonarProjectKey: $(SonarProjectKey)
+      SonarExclusions: $(SonarExclusions)
+      SonarSources: $(SonarSources)
+      SonarCreateMaster: $(SonarCreateMaster)
+      UnitTestCommand: $(UnitTestCommand)
+      AppType: $(AppType)
+  - template: /CD/DeployLambdaEsbuild.yml@templates
+    parameters:
+      FunctionFullName: $(FunctionFullName)
+      SourcesDirectory: $(SourcesDirectory)

@@ -1,38 +1,54 @@
-package com.{{ package_name }};
+package com.{{ package_name }}.infrastructure;
 
-import com.{{ package_name }}.dto.InputDto;
-import com.{{ package_name }}.dto.OutputDto;
-import com.{{ package_name }}.dto.ResponseEntity;
-import com.{{ package_name }}.dto.StatusCode;
+import com.{{ package_name }}.application.usecase.HelloUseCase;
+import com.{{ package_name }}.domain.dto.InputDto;
+import com.{{ package_name }}.domain.dto.OutputDto;
+import com.{{ package_name }}.domain.dto.ResponseEntity;
+import com.{{ package_name }}.domain.dto.StatusCode;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+
+@ExtendWith(MockitoExtension.class)
 public class HandlerTest {
 
-    @Test
-    public void shouldRespondWithGreeting() {
-        // Arrange
-        Handler handler = new Handler();
-        InputDto input = new InputDto();
-        input.setMessage("Iris");
+    @Mock
+    private HelloUseCase helloUseCase;
 
-        // Act
-        ResponseEntity<OutputDto> response = handler.handleRequest(input, null);
+    @InjectMocks
+    private Handler handler;
 
-        // Assert
-        assertEquals(StatusCode.OK.getCode(), response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals("Hello, Iris", response.getBody().getMessage());
+    private InputDto inputDto;
+
+    @BeforeEach
+    void setUp() {
+        inputDto = new InputDto();
+        inputDto.setMessage("Test");
     }
 
     @Test
-    public void shouldHandleNullMessageGracefully() {
-        Handler handler = new Handler();
-        InputDto input = new InputDto(); // message es null
+    public void shouldReturnSuccessResponse() {
+        // Arrange
+        OutputDto useCaseOutput = new OutputDto("Hello, Test");
+        when(helloUseCase.execute(inputDto)).thenReturn(useCaseOutput);
 
-        ResponseEntity<OutputDto> response = handler.handleRequest(input, null);
+        // Act
+        ResponseEntity<OutputDto> response = handler.handleRequest(inputDto, null);
 
+        // Assert
+        assertNotNull(response);
         assertEquals(StatusCode.OK.getCode(), response.getStatusCode());
-        assertEquals("Hello, Unknown", response.getBody().getMessage());
+        assertEquals("Hello, Test", response.getBody().getMessage());
+
+        // Verify that the use case was called
+        verify(helloUseCase).execute(inputDto);
     }
 }

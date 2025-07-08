@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS Serverless Quarkus HTTP - {{ project_name }}
+
+Resources:
+  {{ project_name }}:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: org.acme.infrastructure.EventHandler::handleRequest
+      Runtime: java11
+      CodeUri: ./
+      MemorySize: 512
+      Timeout: 15
+      Policies:
+        - AWSLambdaBasicExecutionRole

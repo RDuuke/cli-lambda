@@ -1,0 +1,27 @@
+# Directorios generados por el CLI
+lda-*
+
+# Entornos virtuales
+venv/
+
+# Archivos de caché y compilados
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+
+# Archivos de configuración de IDEs
+.idea/
+.vscode/
+
+# Archivos de logs
+*.log
+
+# Archivos de base de datos
+*.db
+*.sqlite3
+
+# Archivos temporales
+*.swp
+*.swo

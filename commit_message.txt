@@ -1,0 +1,30 @@
+feat: Mejoras significativas en el scaffolding y la documentación del CLI
+
+Se han implementado mejoras sustanciales en las plantillas de scaffolding para Node.js, Java y Quarkus, y se ha actualizado la documentación del proyecto para reflejar estas nuevas capacidades.
+
+Cambios principales:
+
+- **Node.js (TypeScript)**:
+    - Configuración completa de Jest para pruebas unitarias y de integración.
+    - `tsconfig.json` actualizado con mejores prácticas.
+    - `README.md` detallado con guía de arquitectura y uso.
+- **Java Básico**:
+    - `pom.xml` mejorado con dependencias para logging (Log4j2), testing (JUnit 5, Mockito) y calidad de código (Checkstyle).
+    - Inclusión de `log4j2.xml` y `checkstyle.xml`.
+    - Plantilla de prueba (`HandlerTest.java`) actualizada para usar Mockito.
+    - `README.md` exhaustivo para el proyecto Java.
+- **Quarkus**:
+    - Implementación de scaffolding dual:
+        - **`event` (por defecto)**: Para Lambdas invocadas por eventos, con `quarkus-amazon-lambda` y `EventHandler`.
+        - **`rest` (con `--type rest`)**: Para APIs REST con `quarkus-amazon-lambda-rest` y pruebas con RestAssured.
+    - `main.py` actualizado para soportar el nuevo parámetro `--type`.
+    - `README.md` específicos para cada tipo de proyecto Quarkus.
+- **Documentación General**:
+    - `GEMINI.md` actualizado para reflejar todas las nuevas funcionalidades.
+    - `README.md` principal del CLI reescrito como una guía de usuario completa.
+    - `DIARIO.md` actualizado con el registro de todos los cambios.
+- **Gestión de Archivos**:
+    - `.gitignore` global actualizado para una mejor exclusión de archivos.
+    - Inclusión de `.gitignore` en cada proyecto generado.
+    - Inclusión de `GEMINI.md` en cada proyecto generado para contexto de IA.
+    - Creación de `.geminignore` en la raíz del CLI.
