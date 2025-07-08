@@ -5,7 +5,7 @@ from cli_lambda.utils.template_renderer import render_template
 
 TEMPLATES_DIR = Path(__file__).parent.parent / "templates/java"
 
-def scaffold_java_lambda(name: str):
+def scaffold_java_lambda(name: str, project_prefix: str, java_version: int):
     base_path = Path(name)
     package_name = name.replace("-", "").lower()
 
@@ -28,13 +28,18 @@ def scaffold_java_lambda(name: str):
         (src_test_java / "infrastructure").mkdir(parents=True)
 
         # --- Renderizar archivos de configuración en la raíz ---
-        render_template("pom.xml.j2", base_path / "pom.xml", package_name, TEMPLATES_DIR)
+        render_template("pom.xml.j2", base_path / "pom.xml", package_name, TEMPLATES_DIR, java_version=java_version)
         render_template("README.md.j2", base_path / "README.md", package_name, TEMPLATES_DIR)
         render_template("checkstyle.xml.j2", base_path / "checkstyle.xml", package_name, TEMPLATES_DIR)
         render_template("template.yaml.j2", base_path / "template.yaml", package_name, TEMPLATES_DIR, handler_path=f"com.{package_name}.infrastructure.Handler")
         render_template("event.template.json", base_path / "event.json", package_name, TEMPLATES_DIR)
         render_template("gitignore.template", base_path / ".gitignore", package_name, TEMPLATES_DIR)
         render_template("GEMINI.md.j2", base_path / "GEMINI.md", package_name, Path(__file__).parent.parent / "templates")
+
+        if java_version == 21:
+            render_template("azure-pipelines-java21.yml.j2", base_path / "azure-pipelines.yml", package_name, TEMPLATES_DIR, project_prefix=project_prefix)
+        else:
+            render_template("azure-pipelines.yml.j2", base_path / "azure-pipelines.yml", package_name, TEMPLATES_DIR, project_prefix=project_prefix)
 
         # --- Renderizar archivos de la capa de Dominio ---
         render_template("domain/dto/InputDto.java.j2", src_main_java / "domain/dto/InputDto.java", package_name, TEMPLATES_DIR)
