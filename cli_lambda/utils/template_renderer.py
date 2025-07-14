@@ -2,14 +2,21 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 from cli_lambda.utils.env_config import load_env_config
 
-def render_template(template_name: str, output_path: Path, package: str, templates_dir: Path):
+def render_template(template_name: str, output_path: Path, package: str, templates_dir: Path, **kwargs):
     template_path = templates_dir / template_name
     if not template_path.exists():
         raise FileNotFoundError(f"Template no encontrado: {template_path}")
     
     env = Environment(loader=FileSystemLoader(str(templates_dir)))
     template = env.get_template(template_name)
-    content = template.render(package_name=package)
+    
+    # Combina los argumentos básicos con los adicionales
+    context = {
+        "package_name": package,
+        **kwargs
+    }
+    
+    content = template.render(**context)
     output_path.write_text(content, encoding="utf-8")
 
 def render_sam_template(destination_dir: Path, name: str, templates_dir: Path):
