@@ -4,7 +4,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 esbuild
   .build({
-    entryPoints: ['infrastructure/handler.ts'],
+    entryPoints: ['src/infrastructure/handler.ts'],
     bundle: true,
     minify: isProduction,
     sourcemap: !isProduction,

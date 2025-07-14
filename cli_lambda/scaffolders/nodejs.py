@@ -12,9 +12,10 @@ def scaffold_nodejs_lambda(name: str, lang: str, project_prefix: str):
         return
     
     try:
-        (base_path / "domain").mkdir(parents=True)
-        (base_path / "application").mkdir()
-        (base_path / "infrastructure").mkdir()
+        (base_path / "src").mkdir(parents=True)
+        (base_path / "src" / "domain").mkdir()
+        (base_path / "src" / "application").mkdir()
+        (base_path / "src" / "infrastructure").mkdir()
 
         templates_base_dir = Path(__file__).parent.parent / "templates/nodejs"
         
@@ -28,18 +29,21 @@ def scaffold_nodejs_lambda(name: str, lang: str, project_prefix: str):
             (base_path / "test" / "unit" / "infrastructure").mkdir()
 
             # Render domain layer files
-            render_template("domain/model.ts.j2", base_path / "domain" / "model.ts", project_name, current_templates_dir)
-            render_template("domain/company.repository.ts.j2", base_path / "domain" / "company.repository.ts", project_name, current_templates_dir)
-            render_template("domain/logger.interface.ts.j2", base_path / "domain" / "logger.interface.ts", project_name, current_templates_dir)
+            render_template("domain/model.ts.j2", base_path / "src" / "domain" / "model.ts", project_name, current_templates_dir)
+            render_template("domain/company.repository.ts.j2", base_path / "src" / "domain" / "company.repository.ts", project_name, current_templates_dir)
+            render_template("domain/logger.interface.ts.j2", base_path / "src" / "domain" / "logger.interface.ts", project_name, current_templates_dir)
 
             # Render application layer files
-            render_template("application/usecase.ts.j2", base_path / "application" / "usecase.ts", project_name, current_templates_dir)
+            render_template("application/usecase.ts.j2", base_path / "src" / "application" / "usecase.ts", project_name, current_templates_dir)
 
             # Render infrastructure layer files
-            render_template("infrastructure/company.repository.ts.j2", base_path / "infrastructure" / "company.repository.ts", project_name, current_templates_dir)
-            render_template("infrastructure/console.logger.ts.j2", base_path / "infrastructure" / "console.logger.ts", project_name, current_templates_dir)
-            render_template("infrastructure/dependencies.ts.j2", base_path / "infrastructure" / "dependencies.ts", project_name, current_templates_dir)
-            render_template("infrastructure/handler.ts.j2", base_path / "infrastructure" / "handler.ts", project_name, current_templates_dir)
+            render_template("infrastructure/company.repository.ts.j2", base_path / "src" / "infrastructure" / "company.repository.ts", project_name, current_templates_dir)
+            render_template("infrastructure/console.logger.ts.j2", base_path / "src" / "infrastructure" / "console.logger.ts", project_name, current_templates_dir)
+            render_template("infrastructure/dependencies.ts.j2", base_path / "src" / "infrastructure" / "dependencies.ts", project_name, current_templates_dir)
+            render_template("infrastructure/handler.ts.j2", base_path / "src" / "infrastructure" / "handler.ts", project_name, current_templates_dir)
+
+            # Render index.ts as the entry point
+            render_template("index.ts.j2", base_path / "src" / "index.ts", project_name, current_templates_dir)
 
             # Render test files
             render_template("test/unit/application/get-company.usecase.test.ts.j2", base_path / "test" / "unit" / "application" / "get-company.usecase.test.ts", project_name, current_templates_dir)

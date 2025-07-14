@@ -2,7 +2,7 @@
   "name": "{{ package_name }}",
   "version": "1.0.0",
   "description": "A simple TypeScript Lambda function",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest",
     "build": "esbuild --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js src/index.ts",
