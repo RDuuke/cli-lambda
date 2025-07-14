@@ -1,11 +1,27 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { getHelloMessage } from "../../application/usecase";
+import { initializeDependencies } from "@infrastructure/dependencies";
+import { ConsoleLogger } from "@infrastructure/console.logger"; // Import the logger to use it directly in the handler for logging invocation
+
+// Initialize logger outside the handler to reuse across warm invocations
+const logger = new ConsoleLogger();
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    const message = getHelloMessage();
-    const response = {
-        statusCode: 200,
-        body: JSON.stringify(message),
-    };
-    return response;
+    logger.info("Lambda invocation received", { path: event.path, method: event.httpMethod });
+
+    const getCompanyUseCase = initializeDependencies();
+
+    try {
+        const company = await getCompanyUseCase.execute();
+        logger.info("Successfully fetched company", { companyName: company.name });
+        return {
+            statusCode: 200,
+            body: JSON.stringify(company),
+        };
+    } catch (error) {
+        logger.error("Error during Lambda execution", error as Error, { path: event.path });
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: "Internal Server Error" }),
+        };
+    }
 };

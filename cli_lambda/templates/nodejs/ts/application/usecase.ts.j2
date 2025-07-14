@@ -1,5 +1,13 @@
-import { hello } from "../domain/model";
+import { Company, ICompanyRepository } from "@domain/company.repository";
+import { ILogger } from "@domain/logger.interface";
 
-export const getHelloMessage = (): string => {
-    return hello();
-};
+export class GetCompanyUseCase {
+    constructor(private companyRepository: ICompanyRepository, private logger: ILogger) {}
+
+    async execute(): Promise<Company> {
+        this.logger.info("Executing GetCompanyUseCase");
+        const company = await this.companyRepository.getCompany();
+        this.logger.info("Company fetched", { companyName: company.name });
+        return company;
+    }
+}

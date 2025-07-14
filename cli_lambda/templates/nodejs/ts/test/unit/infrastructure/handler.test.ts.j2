@@ -1,0 +1,73 @@
+import { APIGatewayProxyEvent } from "aws-lambda";
+import { handler } from "@infrastructure/handler";
+import { GetCompanyUseCase } from "@application/usecase";
+import { Company } from "@domain/model";
+import { ConsoleLogger } from "@infrastructure/console.logger";
+
+// Mock the dependencies initialization
+jest.mock("@infrastructure/dependencies", () => ({
+    initializeDependencies: jest.fn(),
+}));
+
+describe("handler", () => {
+    let mockGetCompanyUseCase: jest.Mocked<GetCompanyUseCase>;
+    let mockLogger: jest.Mocked<ConsoleLogger>;
+
+    beforeEach(() => {
+        mockGetCompanyUseCase = {
+            execute: jest.fn(),
+        } as jest.Mocked<GetCompanyUseCase>;
+
+        mockLogger = {
+            info: jest.fn(),
+            error: jest.fn(),
+        } as jest.Mocked<ConsoleLogger>;
+
+        // Manually mock the logger instance that is outside the handler
+        jest.spyOn(ConsoleLogger.prototype, 'info').mockImplementation(mockLogger.info);
+        jest.spyOn(ConsoleLogger.prototype, 'error').mockImplementation(mockLogger.error);
+
+        // Ensure initializeDependencies returns our mocked use case
+        const { initializeDependencies } = require("@infrastructure/dependencies");
+        initializeDependencies.mockReturnValue(mockGetCompanyUseCase);
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
+    it("should return 200 with company data on success", async () => {
+        const expectedCompany = new Company("IRIS");
+        mockGetCompanyUseCase.execute.mockResolvedValue(expectedCompany);
+
+        const event: APIGatewayProxyEvent = {
+            httpMethod: "GET",
+            path: "/company",
+        } as APIGatewayProxyEvent;
+
+        const result = await handler(event);
+
+        expect(result.statusCode).toBe(200);
+        expect(JSON.parse(result.body)).toEqual(expectedCompany);
+        expect(mockGetCompanyUseCase.execute).toHaveBeenCalledTimes(1);
+        expect(mockLogger.info).toHaveBeenCalledWith("Lambda invocation received", { path: "/company", method: "GET" });
+        expect(mockLogger.info).toHaveBeenCalledWith("Successfully fetched company", { companyName: "IRIS" });
+    });
+
+    it("should return 500 on internal server error", async () => {
+        const expectedError = new Error("Something went wrong");
+        mockGetCompanyUseCase.execute.mockRejectedValue(expectedError);
+
+        const event: APIGatewayProxyEvent = {
+            httpMethod: "GET",
+            path: "/company",
+        } as APIGatewayProxyEvent;
+
+        const result = await handler(event);
+
+        expect(result.statusCode).toBe(500);
+        expect(JSON.parse(result.body)).toEqual({ message: "Internal Server Error" });
+        expect(mockGetCompanyUseCase.execute).toHaveBeenCalledTimes(1);
+        expect(mockLogger.error).toHaveBeenCalledWith("Error during Lambda execution", expectedError, { path: "/company" });
+    });
+});

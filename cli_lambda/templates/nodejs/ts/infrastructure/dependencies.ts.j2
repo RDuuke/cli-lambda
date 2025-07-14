@@ -1,0 +1,10 @@
+import { GetCompanyUseCase } from "@application/usecase";
+import { InfrastructureCompanyRepository } from "@infrastructure/company.repository";
+import { ConsoleLogger } from "@infrastructure/console.logger";
+
+export const initializeDependencies = (): GetCompanyUseCase => {
+    const logger = new ConsoleLogger();
+    const companyRepository = new InfrastructureCompanyRepository();
+    const getCompanyUseCase = new GetCompanyUseCase(companyRepository, logger);
+    return getCompanyUseCase;
+};

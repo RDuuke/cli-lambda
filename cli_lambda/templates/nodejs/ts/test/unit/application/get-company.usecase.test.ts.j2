@@ -1,0 +1,44 @@
+import { GetCompanyUseCase } from "@application/usecase";
+import { Company, ICompanyRepository } from "@domain/company.repository";
+import { ILogger } from "@domain/logger.interface";
+
+describe("GetCompanyUseCase", () => {
+    let mockCompanyRepository: jest.Mocked<ICompanyRepository>;
+    let mockLogger: jest.Mocked<ILogger>;
+    let getCompanyUseCase: GetCompanyUseCase;
+
+    beforeEach(() => {
+        mockCompanyRepository = {
+            getCompany: jest.fn(),
+        };
+        mockLogger = {
+            info: jest.fn(),
+            warn: jest.fn(),
+            error: jest.fn(),
+            debug: jest.fn(),
+        };
+        getCompanyUseCase = new GetCompanyUseCase(mockCompanyRepository, mockLogger);
+    });
+
+    it("should return the company from the repository", async () => {
+        const expectedCompany = new Company("Test Company");
+        mockCompanyRepository.getCompany.mockResolvedValue(expectedCompany);
+
+        const result = await getCompanyUseCase.execute();
+
+        expect(result).toEqual(expectedCompany);
+        expect(mockCompanyRepository.getCompany).toHaveBeenCalledTimes(1);
+        expect(mockLogger.info).toHaveBeenCalledWith("Executing GetCompanyUseCase");
+        expect(mockLogger.info).toHaveBeenCalledWith("Company fetched", { companyName: expectedCompany.name });
+    });
+
+    it("should throw an error if the repository throws an error", async () => {
+        const expectedError = new Error("Database error");
+        mockCompanyRepository.getCompany.mockRejectedValue(expectedError);
+
+        await expect(getCompanyUseCase.execute()).rejects.toThrow(expectedError);
+        expect(mockCompanyRepository.getCompany).toHaveBeenCalledTimes(1);
+        expect(mockLogger.info).toHaveBeenCalledWith("Executing GetCompanyUseCase");
+        // Error logging is handled by the handler, not the use case itself in this simplified example
+    });
+});

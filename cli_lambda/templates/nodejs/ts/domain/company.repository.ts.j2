@@ -1,0 +1,5 @@
+import { Company } from "@domain/model";
+
+export interface ICompanyRepository {
+    getCompany(): Promise<Company>;
+}

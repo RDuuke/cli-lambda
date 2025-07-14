@@ -21,9 +21,31 @@ def scaffold_nodejs_lambda(name: str, lang: str, project_prefix: str):
         if lang == "ts":
             current_templates_dir = templates_base_dir / "ts"
             # Generar archivos usando Jinja2 para TypeScript
-            render_template("infrastructure/handler.ts.j2", base_path / "infrastructure" / "handler.ts", project_name, current_templates_dir)
-            render_template("application/usecase.ts.j2", base_path / "application" / "usecase.ts", project_name, current_templates_dir)
+            # Create test directories
+            (base_path / "test").mkdir(parents=True)
+            (base_path / "test" / "unit").mkdir()
+            (base_path / "test" / "unit" / "application").mkdir()
+            (base_path / "test" / "unit" / "infrastructure").mkdir()
+
+            # Render domain layer files
             render_template("domain/model.ts.j2", base_path / "domain" / "model.ts", project_name, current_templates_dir)
+            render_template("domain/company.repository.ts.j2", base_path / "domain" / "company.repository.ts", project_name, current_templates_dir)
+            render_template("domain/logger.interface.ts.j2", base_path / "domain" / "logger.interface.ts", project_name, current_templates_dir)
+
+            # Render application layer files
+            render_template("application/usecase.ts.j2", base_path / "application" / "usecase.ts", project_name, current_templates_dir)
+
+            # Render infrastructure layer files
+            render_template("infrastructure/company.repository.ts.j2", base_path / "infrastructure" / "company.repository.ts", project_name, current_templates_dir)
+            render_template("infrastructure/console.logger.ts.j2", base_path / "infrastructure" / "console.logger.ts", project_name, current_templates_dir)
+            render_template("infrastructure/dependencies.ts.j2", base_path / "infrastructure" / "dependencies.ts", project_name, current_templates_dir)
+            render_template("infrastructure/handler.ts.j2", base_path / "infrastructure" / "handler.ts", project_name, current_templates_dir)
+
+            # Render test files
+            render_template("test/unit/application/get-company.usecase.test.ts.j2", base_path / "test" / "unit" / "application" / "get-company.usecase.test.ts", project_name, current_templates_dir)
+            render_template("test/unit/infrastructure/handler.test.ts.j2", base_path / "test" / "unit" / "infrastructure" / "handler.test.ts", project_name, current_templates_dir)
+
+            # Render root level files
             render_template("package.json.j2", base_path / "package.json", project_name, current_templates_dir, project_prefix=project_prefix)
             render_template("tsconfig.json.j2", base_path / "tsconfig.json", project_name, current_templates_dir, project_prefix=project_prefix)
             render_template("esbuild.config.ts.j2", base_path / "esbuild.config.ts", project_name, current_templates_dir, project_prefix=project_prefix)
